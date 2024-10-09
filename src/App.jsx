@@ -1,6 +1,5 @@
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
 import Home from './components/Home';
 import Contact from './components/Contact';
 import ToDoList from './components/ToDoList';
@@ -8,7 +7,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
 function App() {
-  // State for tasks, new task input, and editing status
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -18,47 +16,49 @@ function App() {
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
     setTasks(savedTasks);
-  }, []);
+  }, []); // This runs only once when the component mounts
 
   // Save tasks to localStorage whenever tasks change
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    if (tasks.length > 0) {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
   }, [tasks]);
 
-  // Function to add or update a task
   const addTask = () => {
-    if (newTask.trim() === '') return; // Prevent adding empty tasks
+    if (newTask.trim() === '') return;
 
     if (isEditing) {
       const updatedTasks = tasks.map((task, index) =>
         index === currentTaskIndex ? { ...task, text: newTask } : task
       );
       setTasks(updatedTasks);
-      setIsEditing(false); // Reset editing state
+      setIsEditing(false);
     } else {
-      setTasks([...tasks, { text: newTask, completed: false }]); // Add new task
+      setTasks([...tasks, { text: newTask, completed: false }]);
     }
-    setNewTask(''); // Clear input field
+
+    setNewTask(''); // Clear input field after adding/updating
   };
 
-  // Function to toggle task completion
   const toggleComplete = (index) => {
-    const updatedTasks = tasks.map((task, i) =>
-      i === index ? { ...task, completed: !task.completed } : task
+    const updatedTasks = tasks.map((task, i) => 
+      i === index 
+        ? { ...task, completed: !task.completed, completedAt: !task.completed ? new Date().toLocaleString() : null } 
+        : task
     );
     setTasks(updatedTasks);
   };
+  
 
-  // Function to delete a task
   const deleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   };
 
-  // Function to edit a task
   const editTask = (index) => {
     setIsEditing(true);
-    setNewTask(tasks[index].text); // Populate the input with the task's text
+    setNewTask(tasks[index].text);
     setCurrentTaskIndex(index);
   };
 
