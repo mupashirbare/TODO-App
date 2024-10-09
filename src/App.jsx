@@ -1,5 +1,11 @@
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
+import Home from './components/Home';
+import Contact from './components/Contact';
+import ToDoList from './components/ToDoList';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 function App() {
   // State for tasks, new task input, and editing status
@@ -57,55 +63,44 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <h1 className="text-2xl font-bold text-center mb-4">To-Do List</h1>
-      
-      {/* Input and Add/Update Button */}
-      <div className="flex justify-center mb-4">
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="border rounded p-2 w-64"
-          placeholder="Enter a task..."
-        />
-        <button
-          onClick={addTask}
-          className="bg-blue-500 text-white rounded p-2 ml-2"
-        >
-          {isEditing ? 'Update Task' : 'Add Task'}
-        </button>
-      </div>
-
-      {/* Task List */}
-      <div className="w-full sm:w-3/4 lg:w-1/2 mx-auto">
-        {tasks.length === 0 ? (
-          <p className="text-center text-gray-500">No tasks yet.</p>
-        ) : (
-          tasks.map((task, index) => (
-            <div
-              key={index}
-              className={`p-4 flex justify-between items-center border-b ${
-                task.completed ? 'line-through text-gray-500' : ''
-              }`}
-            >
-              <span>{task.text}</span>
-              <div className="flex space-x-2">
-                <button onClick={() => toggleComplete(index)} className="text-green-600">
-                  <FaCheck />
-                </button>
-                <button onClick={() => editTask(index)} className="text-blue-600">
-                  <FaEdit />
-                </button>
-                <button onClick={() => deleteTask(index)} className="text-red-600">
-                  <FaTrash />
-                </button>
+    <Router>
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        <Navbar />
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/tasks" element={
+              <div className="p-4">
+                <h1 className="text-2xl font-bold text-center mb-4">Task List</h1>
+                <div className="flex justify-center mb-4">
+                  <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    className="border rounded p-2 w-64"
+                    placeholder="Enter a task..."
+                  />
+                  <button
+                    onClick={addTask}
+                    className="bg-blue-500 text-white rounded p-2 ml-2"
+                  >
+                    {isEditing ? 'Update Task' : 'Add Task'}
+                  </button>
+                </div>
+                <ToDoList
+                  tasks={tasks}
+                  toggleComplete={toggleComplete}
+                  deleteTask={deleteTask}
+                  editTask={editTask}
+                />
               </div>
-            </div>
-          ))
-        )}
+            } />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-    </div>
+    </Router>
   );
 }
 
