@@ -30,3 +30,8 @@ To run this project locally, follow these steps:
 
    ```bash
    git clone https://github.com/mupashirbare/TODO-App.git
+   cd TODO-App
+   npm install
+   npm run dev
+
+
